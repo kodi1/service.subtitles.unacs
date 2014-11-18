@@ -40,14 +40,14 @@ def clean_info(dat):
 def get_id_url_n(txt, list):
   soup = BeautifulSoup(txt, parse_only=SoupStrainer('tr'))
   # dump_src(soup, 'src.html')
-  for link in soup.find_all('a', href=re.compile(r'(?:\/subtitles\/)')):
+  for link in soup.find_all('a', href=re.compile(r'(?:\/subtitles\/\w+.*\/$)')):
     t = link.find_parent('td').find_next_siblings('td')
     list.append({'url': link['href'],
               'info': clean_info(link.get('title').encode('utf-8', 'replace')),
               'year': link.find_next_sibling('span', text=True).get_text().split('(')[1].split(')')[0],
               'cds': t[0].string.encode('utf-8', 'replace'),
               'fps': t[1].string.encode('utf-8', 'replace'),
-              'rating': t[2].a.img.get('alt'),
+              'rating': t[2].a.img and t[2].a.img.get('alt') or '0.0',
               'id': __name__})
   return
 
