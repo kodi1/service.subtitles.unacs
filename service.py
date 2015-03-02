@@ -18,7 +18,7 @@ __author__     = __addon__.getAddonInfo('author')
 __scriptid__   = __addon__.getAddonInfo('id')
 __scriptname__ = __addon__.getAddonInfo('name')
 __version__    = __addon__.getAddonInfo('version')
-__icon__       = __addon__.getAddonInfo('icon')
+__icon__       = __addon__.getAddonInfo('icon').decode("utf-8")
 __language__   = __addon__.getLocalizedString
 
 __cwd__        = xbmc.translatePath( __addon__.getAddonInfo('path') ).decode("utf-8")
