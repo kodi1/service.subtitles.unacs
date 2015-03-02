@@ -65,9 +65,19 @@ def Search(item):
   else:
     Notify('Server', 'error')
 
+def appendsubfiles(subtitle_list, basedir, files):
+    exts = [".srt", ".sub", ".txt", ".smi", ".ssa", ".ass" ]
+    for file in files:
+      file = os.path.join(basedir, file)
+      if os.path.isdir(file):
+        dirs2, files2 = xbmcvfs.listdir(file)
+        files2.extend(dirs2)
+        appendsubfiles(subtitle_list, file, files2)
+      elif (os.path.splitext(file)[1] in exts):
+        subtitle_list.append(file)
+
 def Download(id,url,filename, stack=False):
   subtitle_list = []
-  exts = [".srt", ".sub", ".txt", ".smi", ".ssa", ".ass" ]
   ## Cleanup temp dir, we recomend you download/unzip your subs in temp folder and
   ## pass that to XBMC to copy and activate
   if xbmcvfs.exists(__temp__):
@@ -90,10 +100,11 @@ def Download(id,url,filename, stack=False):
     xbmc.sleep(500)
     xbmc.executebuiltin(('XBMC.Extract("%s","%s")' % (ff,__temp__,)).encode('utf-8'), True)
     Notify('{0}'.format(sub['fname']),'load')
-    for file in xbmcvfs.listdir(ff)[1]:
-      file = os.path.join(__temp__, (file.decode('utf-8')))
-      if (os.path.splitext( file )[1] in exts):
-        subtitle_list.append(file)
+
+    dirs, files = xbmcvfs.listdir(ff)
+    files.extend(dirs)
+    appendsubfiles(subtitle_list, __temp__, files)
+
   else:
     Notify('Error while downlod')
 
