@@ -68,7 +68,7 @@ def Search(item):
 def appendsubfiles(subtitle_list, basedir, files):
     exts = [".srt", ".sub", ".txt", ".smi", ".ssa", ".ass" ]
     for file in files:
-      file = os.path.join(basedir, file)
+      file = os.path.join(basedir, file.decode("utf-8"))
       if os.path.isdir(file):
         dirs2, files2 = xbmcvfs.listdir(file)
         files2.extend(dirs2)
