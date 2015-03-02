@@ -97,7 +97,7 @@ def Download(id,url,filename, stack=False):
   else:
     Notify('Error while downlod')
 
-  if len(subtitle_list) >= 3:
+  if len(subtitle_list) >= 2:
     subtitle_list = select_1(subtitle_list)
 
   if xbmcvfs.exists(subtitle_list[0]):
