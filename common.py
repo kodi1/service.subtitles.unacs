@@ -3,6 +3,7 @@
 import sys
 import os
 from bs4 import BeautifulSoup
+from bs4 import SoupStrainer
 
 try:
     import xbmc
@@ -40,8 +41,8 @@ def savetofile(d, name):
     f.write(d)
     f.close
 
-def dump_src(s):
+def dump_src(s, name):
   if run_from_xbmc == False:
-    f = open('src.html', 'wb')
+    f = open(name,'wb')
     f.write(s.prettify().encode('utf-8', 'replace'))
     f.close()

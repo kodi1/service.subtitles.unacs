@@ -35,20 +35,20 @@ url = 'http://subsunacs.net:80'
 
 def clean_info(dat):
   soup = BeautifulSoup(dat)
-  return soup.get_text(' ').encode('utf-8', 'replace')
+  return soup.get_text(' ').encode('utf-8', 'replace').replace('  ', ' ')
 
 def get_id_url_n(txt, list):
-  soup = BeautifulSoup(txt)
-  if None != soup.tbody:
-    for t in soup.tbody.find_all('tr'):
-      lst = t.find_all('td')
-      list.append({'url': lst[0].a.get('href'),
-                'info': clean_info(lst[0].a.get('title').encode('utf-8', 'replace')),
-                'year': lst[0].span.get_text().split('(')[1].split(')')[0],
-                'cds': lst[1].string,
-                'fps': lst[2].string,
-                'rating': lst[3].img.get('alt'),
-                'id': __name__})
+  soup = BeautifulSoup(txt, parse_only=SoupStrainer('tr'))
+  # dump_src(soup, 'src.html')
+  for link in soup.find_all('a', href=re.compile(r'(?:\/subtitles\/)')):
+    t = link.find_parent('td').find_next_siblings('td')
+    list.append({'url': link['href'],
+              'info': clean_info(link.get('title').encode('utf-8', 'replace')),
+              'year': link.find_next_sibling('span', text=True).get_text().split('(')[1].split(')')[0],
+              'cds': t[0].string.encode('utf-8', 'replace'),
+              'fps': t[1].string.encode('utf-8', 'replace'),
+              'rating': t[2].a.img.get('alt'),
+              'id': __name__})
   return
 
 def get_data(l, key):

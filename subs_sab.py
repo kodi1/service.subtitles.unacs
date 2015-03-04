@@ -10,8 +10,6 @@ import imp
 from httplib import *
 
 from common import *
-import profile
-
 list = []
 
 values = {'movie':'',
@@ -37,18 +35,16 @@ def clean_info(dat):
   return soup.get_text(' ').encode('utf-8', 'replace').split("'")[1]
 
 def get_id_url_n(txt, list):
-  soup = BeautifulSoup(txt)
-  dump_src(soup)
-  for t in soup.table.find_all('tr'):
-    if t.get('class')[0] == 'subs-row':
-      lst = t.find_all('td')
-      list.append({'url': lst[3].a.get('href').split('attach_id=')[1],
-                  'info': clean_info(lst[3].a.get('onmouseover').encode('utf-8', 'replace')),
-                  'year': lst[3].get_text().split('(')[1].split(')')[0],
-                  'cds': lst[6].string,
-                  'fps': lst[7].string,
-                  'rating': lst[11].a.img.get('alt').split(':')[1].strip(),
-                  'id': __name__})
+  soup = BeautifulSoup(txt, parse_only=SoupStrainer('tr'))
+  for link in soup.find_all('a', href=re.compile(r'[\S]attach_id=(?:\d+)')):
+    t = link.find_parent('td').find_next_siblings('td', text=True)
+    list.append({'url': link['href'].split('attach_id=')[1],
+                'info': clean_info(link.get('onmouseover').encode('utf-8', 'replace')),
+                'year': link.find_parent('td').get_text().split('(')[1].split(')')[0],
+                'cds': t[2].string.encode('utf-8', 'replace'),
+                'fps': t[3].string.encode('utf-8', 'replace'),
+                'rating': link.find_parent('tr').find(href='#').img.get('alt').split(':')[1].strip(),
+                'id': __name__})
 
   return
 
