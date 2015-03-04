@@ -34,30 +34,21 @@ headers = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:22.0) Gecko/2010010
 url = 'http://subsunacs.net:80'
 
 def clean_info(dat):
-  info = ''
-  rex3='&gt;(.*?)&lt;'
-  rg = re.compile(rex3, re.IGNORECASE|re.DOTALL)
-  a = rg.finditer(dat)
-  for m in a:
-    info = info + m.group(1)+' '
-  return (info.decode('cp1251')).encode('utf-8')
+  soup = BeautifulSoup(dat)
+  return soup.get_text(' ').encode('utf-8', 'replace')
 
 def get_id_url_n(txt, list):
-  rex='.*?<td\sclass="tdMovie".*?href="(.*?)\".*?class="tooltip"(.*?)\/div.*?>.*?<\/a><span.*?\((\d+)\).*?<td>(\d)<\/td><td>([0-9.]+)<\/td>.*?"_blank">\s.*?(?:title=")?([0-9.]+)?.><\/a>'
-  rg = re.compile(rex, re.IGNORECASE|re.DOTALL)
-  a = rg.finditer(txt)
-  for m in a:
-    rating = m.group(6)
-    if None == rating:
-      rating = 0
-    list.append({'url': m.group(1),
-                'info': clean_info(m.group(2)),
-                'year': m.group(3),
-                'cds': m.group(4),
-                'fps': m.group(5),
-                'rating': rating,
+  soup = BeautifulSoup(txt)
+  if None != soup.tbody:
+    for t in soup.tbody.find_all('tr'):
+      lst = t.find_all('td')
+      list.append({'url': lst[0].a.get('href'),
+                'info': clean_info(lst[0].a.get('title').encode('utf-8', 'replace')),
+                'year': lst[0].span.get_text().split('(')[1].split(')')[0],
+                'cds': lst[1].string,
+                'fps': lst[2].string,
+                'rating': lst[3].img.get('alt'),
                 'id': __name__})
-
   return
 
 def get_data(l, key):
@@ -84,7 +75,6 @@ def read_sub (item):
     buf = StringIO(response.read())
     f = gzip.GzipFile(fileobj=buf)
     data = f.read()
-    savetofile(data, __name__+'_tmp.html')
     f.close()
     buf.close()
   else:
@@ -92,9 +82,11 @@ def read_sub (item):
     return None
 
   get_id_url_n(data, list)
-  for k in list_key:
-    d = get_data(list, k)
-    log_my(d)
+  if run_from_xbmc == False:
+    for k in list_key:
+      d = get_data(list, k)
+      log_my(d)
+
   return list
 
 def get_sub(id, sub_url, filename):
@@ -103,7 +95,6 @@ def get_sub(id, sub_url, filename):
   request = urllib2.Request(url + sub_url, enc_values, headers)
   response = urllib2.urlopen(request)
   log_my(response.code, BaseHTTPServer.BaseHTTPRequestHandler.responses[response.code][0])
-  log_my(response.info())
   s['data'] = response.read()
   s['fname'] = response.info()['Content-Disposition'].split('filename=')[1].strip('"')
   return s

@@ -10,6 +10,7 @@ import imp
 from httplib import *
 
 from common import *
+import profile
 
 list = []
 
@@ -32,28 +33,22 @@ head = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:22.0) Gecko/20100101 F
 url = "subs.sab.bz"
 
 def clean_info(dat):
-  info = ''
-  rex3='&gt;(.*?)&lt;'
-  rg = re.compile(rex3, re.IGNORECASE|re.DOTALL)
-  a = rg.finditer(dat)
-
-  for m in a:
-    info = info + m.group(1)+' '
-  return (info.decode('cp1251')).encode('utf-8')
+  soup = BeautifulSoup(dat)
+  return soup.get_text(' ').encode('utf-8', 'replace').split("'")[1]
 
 def get_id_url_n(txt, list):
-  rex='[\s\S]*?<tr[\s\S]class="subs-row">[\s\S]*?<td[\s\S]class="c2field"><a[\s\S]href="[\s\S]*?download&attach_id=(\d+)"[\s\S]*?onmouseover[\s\S]*?target=[\s\S](.*?)onmouseout=[\s\S]*?<\/a>\s\((\d+)\)[\s\S]*?<td>[\s\S]*?<td>[\s\S]*?<td>(\d)[\s\S]*?<td>([0-9.]+)[\s\S]*?title="rating:\s(\d)[\s\S]*?<\/tr>'
-  rg = re.compile(rex, re.IGNORECASE|re.DOTALL)
-  a = rg.finditer(txt)
-
-  for m in a:
-    list.append({'url': m.group(1),
-                'info': clean_info(m.group(2)),
-                'year': m.group(3),
-                'cds': m.group(4),
-                'fps': m.group(5),
-                'rating': m.group(6),
-                'id': __name__})
+  soup = BeautifulSoup(txt)
+  dump_src(soup)
+  for t in soup.table.find_all('tr'):
+    if t.get('class')[0] == 'subs-row':
+      lst = t.find_all('td')
+      list.append({'url': lst[3].a.get('href').split('attach_id=')[1],
+                  'info': clean_info(lst[3].a.get('onmouseover').encode('utf-8', 'replace')),
+                  'year': lst[3].get_text().split('(')[1].split(')')[0],
+                  'cds': lst[6].string,
+                  'fps': lst[7].string,
+                  'rating': lst[11].a.img.get('alt').split(':')[1].strip(),
+                  'id': __name__})
 
   return
 
@@ -81,16 +76,18 @@ def read_sub (item):
   if response.status == 200 and response.getheader('content-type').split(';')[0] == 'text/html':
     log_my(response.getheaders())
     data = response.read()
-    savetofile(data, __name__+'_tmp.html')
   else:
     connection.close()
     return None
 
   connection.close()
+
   get_id_url_n(data, list)
-  for k in list_key:
-    d = get_data(list, k)
-    log_my(d)
+  if run_from_xbmc == False:
+    for k in list_key:
+      d = get_data(list, k)
+      log_my(d)
+
   return list
 
 def get_sub(id, sub_url, filename):
