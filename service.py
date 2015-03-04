@@ -26,9 +26,6 @@ __profile__    = xbmc.translatePath( __addon__.getAddonInfo('profile') ).decode(
 __resource__   = xbmc.translatePath( os.path.join( __cwd__, 'resources', 'lib' ) ).decode("utf-8")
 __temp__       = xbmc.translatePath( os.path.join( __profile__, 'temp') ).decode("utf-8")
 
-if not xbmcvfs.exists(__temp__):
-  xbmcvfs.mkdirs(__temp__)
-
 nsub.path = __temp__
 sys.path.append (__resource__)
 
@@ -43,7 +40,7 @@ def Search(item):
   if sub_data != None:
     log_my(sub_data)
     for it in sub_data:
-      listitem = xbmcgui.ListItem(label="Bg",                    # language name for the found subtitle
+      listitem = xbmcgui.ListItem(label=it['id'],                    # language name for the found subtitle
                                 label2=get_info(it),               # file name for the found subtitle
                                 iconImage=str(int(round(float(it['rating'])))), # rating for the subtitle, string 0-5
                                 thumbnailImage="bg"          # language flag, ISO_639_1 language + gif extention, e.g - "en.gif"
@@ -59,7 +56,7 @@ def Search(item):
       ## anything after "action=download&" will be sent to addon once user clicks listed subtitle to downlaod
       url = "plugin://%s/?action=download&link=%s&ID=%s&filename=%s" % (__scriptid__,
                                                                       it['url'],
-                                                                      "ID for the downlaod",
+                                                                      it['id'],
                                                                       "filename of the subtitle")
       ## add it to list, this can be done as many times as needed for all subtitles found
       xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=url,listitem=listitem,isFolder=False)
@@ -74,7 +71,12 @@ def Download(id,url,filename, stack=False):
   ## Cleanup temp dir, we recomend you download/unzip your subs in temp folder and
   ## pass that to XBMC to copy and activate
   if xbmcvfs.exists(__temp__):
-    shutil.rmtree(__temp__)
+    try:
+      Notify('Cleanup', 'ok')
+      shutil.rmtree(__temp__)
+    except:
+      Notify('Error cleanup', 'error')
+      pass
   xbmcvfs.mkdirs(__temp__)
 
   log_my('Download from unacs id', url)
