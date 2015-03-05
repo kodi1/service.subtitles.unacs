@@ -95,13 +95,14 @@ def Download(id,url,filename, stack=False):
   if (sub.has_key('data') and sub.has_key('fname')):
     log_my('{0}'.format(sub['fname']),'saving')
     ff = os.path.join(__temp__, sub['fname'])
-    with open(ff, 'wb') as subFile:
-      subFile.write(sub['data'])
+    subFile = xbmcvfs.File(ff, 'wb')
+    subFile.write(sub['data'])
+    subFile.close()
     xbmc.sleep(500)
     xbmc.executebuiltin(('XBMC.Extract("%s","%s")' % (ff,__temp__,)).encode('utf-8'), True)
     Notify('{0}'.format(sub['fname']),'load')
 
-    dirs, files = xbmcvfs.listdir(ff)
+    dirs, files = xbmcvfs.listdir(__temp__)
     files.extend(dirs)
     appendsubfiles(subtitle_list, __temp__, files)
 
