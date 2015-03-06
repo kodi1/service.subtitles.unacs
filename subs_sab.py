@@ -68,8 +68,11 @@ def get_search_string (item):
 def read_sub (item):
   log_my(item['title'], item['file_original_path'])
 
-  values['movie'] = get_search_string(item)
-  values['yr'] = item['year']
+  if item['mansearch']:
+    values['movie'] = item['mansearchstr']
+  else:
+    values['movie'] = get_search_string(item)
+    values['yr'] = item['year']
 
   enc_values = urllib.urlencode(values)
   log_my('Url: ', (url), 'Headers: ', (head), 'Values: ', (enc_values))

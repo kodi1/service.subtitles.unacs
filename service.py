@@ -140,7 +140,7 @@ def get_params():
 
 params = get_params()
 
-if params['action'] == 'search':
+if params['action'] == 'search' or params['action'] == 'manualsearch':
   item = {}
   item['temp']               = False
   item['rar']                = False
@@ -151,6 +151,12 @@ if params['action'] == 'search':
   item['title']              = normalizeString(xbmc.getInfoLabel("VideoPlayer.OriginalTitle")) # try to get original title
   item['file_original_path'] = urllib.unquote(xbmc.Player().getPlayingFile().decode('utf-8'))  # Full path of a playing file
   item['3let_language']      = []
+
+  if 'searchstring' in params:
+    item['mansearch'] = True
+    item['mansearchstr'] = urllib.unquote(params['searchstring'])
+  else:
+    item['mansearch'] = False
 
   for lang in urllib.unquote(params['languages']).decode('utf-8').split(","):
     item['3let_language'].append(xbmc.convertLanguage(lang,xbmc.ISO_639_2))
