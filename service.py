@@ -2,6 +2,7 @@
 
 import os
 import sys
+import re
 import xbmc
 import urllib
 import xbmcvfs
@@ -164,6 +165,14 @@ if params['action'] == 'search' or params['action'] == 'manualsearch':
   if item['title'] == "":
     item['title']  = normalizeString(xbmc.getInfoLabel("VideoPlayer.Title"))
     item['title'], item['year'] = xbmc.getCleanMovieTitle( item['title'] )
+
+  if item['tvshow']:
+    # Remove the year from some tv show titles
+    # NOTE: do not use the year for tv shows as it may cause wrong results
+    item['year'] = ''
+    tvshmatch = re.match(r'(.+) \((\d{4})\)$', item['tvshow'])
+    if tvshmatch and len(tvshmatch.groups()) == 2:
+      item['tvshow'] = tvshmatch.group(1)
 
   if item['episode'].lower().find("s") > -1:                                      # Check if season is "Special"
     item['season'] = "0"                                                          #
