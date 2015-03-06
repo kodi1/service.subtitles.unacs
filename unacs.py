@@ -1,14 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from nsub import log_my, savetofile, list_key
-import urllib, urllib2, os
-import BaseHTTPServer
-import gzip
-from StringIO import StringIO
-import re
-import sys
-import imp
-
 from common import *
 
 list = []
@@ -32,10 +24,7 @@ headers = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:22.0) Gecko/2010010
            "Host":"subsunacs.net"}
 
 url = 'http://subsunacs.net:80'
-
-def clean_info(dat):
-  soup = BeautifulSoup(dat)
-  return soup.get_text(' ').encode('utf-8', 'replace').replace('  ', ' ')
+clean_str = r"(<div.*?>|<\/div>|<span.*?>|<\/span>|<img.*?>|<a[\s\S]*?>|<\/a>|<\/?b>|<br\s?\/>|<br>|\&\S*?;)"
 
 def get_id_url_n(txt, list):
   soup = BeautifulSoup(txt, parse_only=SoupStrainer('tr'))
@@ -43,7 +32,7 @@ def get_id_url_n(txt, list):
   for link in soup.find_all('a', href=re.compile(r'(?:\/subtitles\/\w+.*\/$)')):
     t = link.find_parent('td').find_next_siblings('td')
     list.append({'url': link['href'],
-              'info': clean_info(link.get('title').encode('utf-8', 'replace')),
+              'info': re.sub(clean_str, " ", link.get('title').encode('utf-8', 'replace')),
               'year': link.find_next_sibling('span', text=True).get_text().split('(')[1].split(')')[0],
               'cds': t[0].string.encode('utf-8', 'replace'),
               'fps': t[1].string.encode('utf-8', 'replace'),

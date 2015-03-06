@@ -5,12 +5,20 @@ import os
 from bs4 import BeautifulSoup
 from bs4 import SoupStrainer
 
+import urllib, urllib2, os
+import BaseHTTPServer
+import gzip
+from StringIO import StringIO
+import re
+import imp
+from httplib import *
+
 try:
-    import xbmc
-    run_from_xbmc = True
+  import xbmc
+  run_from_xbmc = True
 except ImportError:
-    run_from_xbmc = False
-    pass
+  run_from_xbmc = False
+  pass
 
 if run_from_xbmc == True:
   import xbmcvfs
@@ -32,7 +40,7 @@ def log_my(*msg):
 
 def get_info(it):
   str = 'Fps:{0} Cd:{1} - {2}'.format(it['fps'], it['cds'], it['info'])
-  return str
+  return re.sub("  ", " ", str)
 
 def savetofile(d, name):
   if run_from_xbmc == False:

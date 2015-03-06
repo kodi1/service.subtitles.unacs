@@ -1,17 +1,9 @@
 # -*- coding: utf-8 -*-
 
-import urllib, urllib2, os
-import BaseHTTPServer
-import gzip
-from StringIO import StringIO
-import re
-import sys
-import imp
-from httplib import *
-
+from nsub import log_my, savetofile, list_key
 from common import *
-list = []
 
+list = []
 values = {'movie':'',
           'act':'search',
           'select-language':'2',
@@ -29,17 +21,14 @@ head = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:22.0) Gecko/20100101 F
            }
 
 url = "subs.sab.bz"
-
-def clean_info(dat):
-  soup = BeautifulSoup(dat)
-  return soup.get_text(' ').encode('utf-8', 'replace').split("'")[1]
+clean_str = r"(ddri\S*?'|','\#\S+\)|<div.*?>|<\/div>|<span.*?>|<\/span>|<img.*?\/>|<a[\s\S]*?>|<\/a>|<\/?b>|<br\s?\/>|&lt;b&gt;|\&\S*?;|\/[ab]|br\s\/|a\shref.*?_blank)"
 
 def get_id_url_n(txt, list):
   soup = BeautifulSoup(txt, parse_only=SoupStrainer('tr'))
   for link in soup.find_all('a', href=re.compile(r'[\S]attach_id=(?:\d+)')):
     t = link.find_parent('td').find_next_siblings('td', text=True)
     list.append({'url': link['href'].split('attach_id=')[1],
-                'info': clean_info(link.get('onmouseover').encode('utf-8', 'replace')),
+                'info': re.sub(clean_str, " ", link.get('onmouseover').encode('utf-8', 'replace')),
                 'year': link.find_parent('td').get_text().split('(')[1].split(')')[0],
                 'cds': t[2].string.encode('utf-8', 'replace'),
                 'fps': t[3].string.encode('utf-8', 'replace'),
