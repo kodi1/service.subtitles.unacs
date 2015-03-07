@@ -92,7 +92,6 @@ def Download(id,url,filename, stack=False):
   ## pass that to XBMC to copy and activate
   if xbmcvfs.exists(__temp__):
     try:
-      Notify('Cleanup', 'ok')
       shutil.rmtree(__temp__)
     except:
       Notify('Error cleanup', 'error')
