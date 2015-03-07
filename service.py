@@ -66,16 +66,25 @@ def Search(item):
   else:
     Notify('Server', 'error')
 
+def IsSubFile(file):
+  exts = [".srt", ".sub", ".txt", ".smi", ".ssa", ".ass" ]
+  filename = os.path.basename(file.lower())
+  name, ext = os.path.splitext(filename)
+  if ext not in exts: return False
+  if ext != ".txt": return True
+  # Check for README text files
+  readme = re.search(ur'subsunacs\.net|subs\.sab\.bz|танете част|прочети|^read ?me|procheti', name, re.I)
+  return readme == None
+
 def appendsubfiles(subtitle_list, basedir, files):
-    exts = [".srt", ".sub", ".txt", ".smi", ".ssa", ".ass" ]
-    for file in files:
-      file = os.path.join(basedir, file.decode("utf-8"))
-      if os.path.isdir(file):
-        dirs2, files2 = xbmcvfs.listdir(file)
-        files2.extend(dirs2)
-        appendsubfiles(subtitle_list, file, files2)
-      elif (os.path.splitext(file)[1] in exts):
-        subtitle_list.append(file)
+  for file in files:
+    file = os.path.join(basedir, file.decode("utf-8"))
+    if os.path.isdir(file.encode('utf-8')):
+      dirs2, files2 = xbmcvfs.listdir(file.encode('utf-8'))
+      files2.extend(dirs2)
+      appendsubfiles(subtitle_list, file, files2)
+    elif IsSubFile(file):
+      subtitle_list.append(file.encode('utf-8'))
 
 def Download(id,url,filename, stack=False):
   subtitle_list = []
