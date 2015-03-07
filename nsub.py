@@ -45,7 +45,11 @@ if __name__ == "__main__":
   item ={'m':'',
          'title':'',
          'year':'',
-         'file_original_path':''
+         'file_original_path':'',
+         'mansearch':'',
+         'tvshow':'',
+         'season':'',
+         'episode':'',
         }
 
   if cnt == 3:
