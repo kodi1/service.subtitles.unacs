@@ -15,6 +15,7 @@ from httplib import *
 
 try:
   import xbmc
+  from ga import ga
   run_from_xbmc = True
 except ImportError:
   run_from_xbmc = False
@@ -37,6 +38,18 @@ def log_my(*msg):
     for m in msg:
       print m,
     print
+
+def update(name, act_ev, crash=None):
+  payload = {}
+  payload['ec'] = name
+  payload['ea'] = act_ev
+  payload['ev'] = '1'
+  if run_from_xbmc == True:
+    payload['an'] = xbmcaddon.Addon().getAddonInfo('name')
+    payload['av'] = xbmcaddon.Addon().getAddonInfo('version')
+    ga().update(payload, crash)
+  else:
+    print payload
 
 def get_info(it):
   str = 'Fps:{0} Cd:{1} - {2}'.format(it['fps'], it['cds'], it['info'])

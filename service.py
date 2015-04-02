@@ -11,8 +11,6 @@ import xbmcgui
 import xbmcplugin
 import shutil
 import unicodedata
-import nsub
-from nsub import list_key, log_my, read_sub, get_sub, get_info, select_1
 
 __addon__ = xbmcaddon.Addon()
 __author__     = __addon__.getAddonInfo('author')
@@ -27,8 +25,10 @@ __profile__    = xbmc.translatePath( __addon__.getAddonInfo('profile') ).decode(
 __resource__   = xbmc.translatePath( os.path.join( __cwd__, 'resources', 'lib' ) ).decode("utf-8")
 __temp__       = xbmc.translatePath( os.path.join( __profile__, 'temp', '') ).decode("utf-8")
 
-nsub.path = __temp__
 sys.path.append (__resource__)
+import nsub
+from nsub import list_key, log_my, read_sub, get_sub, get_info, select_1
+nsub.path = __temp__
 
 def Notify (msg1, msg2):
   xbmc.executebuiltin((u'Notification(%s,%s,%s,%s)' % (msg1, msg2, '7500', __icon__)).encode('utf-8'))
@@ -98,7 +98,7 @@ def Download(id,url,filename, stack=False):
       pass
   xbmcvfs.mkdirs(__temp__)
 
-  log_my('Download from unacs id', url)
+  log_my('Download from id', url)
   sub=get_sub(id, url, filename)
 
   if (sub.has_key('data') and sub.has_key('fname')):

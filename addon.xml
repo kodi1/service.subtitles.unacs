@@ -6,6 +6,8 @@
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
     <import addon="script.module.beautifulsoup4" version="4.3.2"/>
+    <import addon="script.module.requests" version="1.1.0"/>
+    <import addon="script.module.garepobg" version="0.1.0"/>
   </requires>
   <extension point="xbmc.subtitle.module"
              library="service.py" />

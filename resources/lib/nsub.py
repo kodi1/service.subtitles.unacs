@@ -18,26 +18,37 @@ def select_1(list):
   return l
 
 def read_sub (item):
+  update('title:%(title)s,tvshow:%(tvshow)s,season:%(season)s,episode:%(episode)s' % item+',%s' % os.path.basename(item['file_original_path']), 'subs_search')
   l = []
   ret = 0
   try:
     l.extend(unacs.read_sub(item))
   except Exception as e:
     log_my('unacs.read_sub', str(e))
+    update('title:%(title)s,tvshow:%(tvshow)s,season:%(season)s,episode:%(episode)s' % item, 'exception', sys.exc_info())
     ret += 1
   try:
     l.extend(subs_sab.read_sub(item))
   except Exception as e:
     log_my('subs_sab.read_sub', str(e))
+    update('title:%(title)s,tvshow:%(tvshow)s,season:%(season)s,episode:%(episode)s' % item, 'exception', sys.exc_info())
     ret += 2
   if ret == 3: return None
   return l
 
 def get_sub(id, sub_url, filename):
   if id == 'unacs':
-    r=unacs.get_sub(id, sub_url, filename)
+    try:
+      r=unacs.get_sub(id, sub_url, filename)
+    except:
+      update(filename, 'exception', sys.exc_info())
   else:
-    r=subs_sab.get_sub(id, sub_url, filename)
+    try:
+      r=subs_sab.get_sub(id, sub_url, filename)
+    except:
+      update(filename, 'exception', sys.exc_info())
+
+  update(r.get('fname','empty'), 'subs_download')
   return r
 
 if __name__ == "__main__":
