@@ -39,11 +39,12 @@ def log_my(*msg):
       print m,
     print
 
-def update(name, act_ev, crash=None):
+def update(name, act_ev, dat, crash=None):
   payload = {}
   payload['ec'] = name
   payload['ea'] = act_ev
   payload['ev'] = '1'
+  payload['dl'] = urllib.quote_plus(dat.encode('utf-8'))
   if run_from_xbmc == True:
     payload['an'] = xbmcaddon.Addon().getAddonInfo('name')
     payload['av'] = xbmcaddon.Addon().getAddonInfo('version')

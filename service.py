@@ -115,14 +115,14 @@ def Download(id,url,filename, stack=False):
     files.extend(dirs)
     appendsubfiles(subtitle_list, __temp__, files)
 
+    if len(subtitle_list) >= 2:
+      subtitle_list = select_1(subtitle_list)
+    if xbmcvfs.exists(subtitle_list[0]):
+      return subtitle_list
+
   else:
-    Notify('Error while downlod')
-
-  if len(subtitle_list) >= 2:
-    subtitle_list = select_1(subtitle_list)
-
-  if xbmcvfs.exists(subtitle_list[0]):
-    return subtitle_list
+    Notify('Error','downlod subtitles')
+    return []
 
 def normalizeString(str):
   return unicodedata.normalize(
