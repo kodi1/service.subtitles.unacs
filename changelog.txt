@@ -1,4 +1,5 @@
 [B]Change log:[/B]
+  - Use html5lib parser
   - Better error handling
   - Folder restructuring
   - Don't show cleanup ok notification - josdion

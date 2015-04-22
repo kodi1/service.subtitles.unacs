@@ -24,7 +24,7 @@ url = "subs.sab.bz"
 clean_str = r"(ddri\S*?'|','\#\S+\)|<div.*?>|<\/div>|<span.*?>|<\/span>|<img.*?\/>|<a[\s\S]*?>|<\/a>|<\/?b>|<br\s?\/>|&lt;b&gt;|\&\S*?;|\/[ab]|br\s\/|a\shref.*?_blank)"
 
 def get_id_url_n(txt, list):
-  soup = BeautifulSoup(txt, parse_only=SoupStrainer('tr'))
+  soup = BeautifulSoup(txt, 'html5lib')
   for link in soup.find_all('a', href=re.compile(r'[\S]attach_id=(?:\d+)')):
     t = link.find_parent('td').find_next_siblings('td', text=True)
     list.append({'url': link['href'].split('attach_id=')[1],

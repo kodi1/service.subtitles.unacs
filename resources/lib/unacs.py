@@ -27,7 +27,7 @@ url = 'http://subsunacs.net:80'
 clean_str = r"(<div.*?>|<\/div>|<span.*?>|<\/span>|<img.*?>|<a[\s\S]*?>|<\/a>|<\/?b>|<br\s?\/>|<br>|\&\S*?;)"
 
 def get_id_url_n(txt, list):
-  soup = BeautifulSoup(txt, parse_only=SoupStrainer('tr'))
+  soup = BeautifulSoup(txt, 'html5lib')
   # dump_src(soup, 'src.html')
   for link in soup.find_all('a', href=re.compile(r'(?:\/subtitles\/\w+.*\/$)')):
     t = link.find_parent('td').find_next_siblings('td')

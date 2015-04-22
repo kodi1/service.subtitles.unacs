@@ -3,7 +3,6 @@
 import sys
 import os
 from bs4 import BeautifulSoup
-from bs4 import SoupStrainer
 
 import urllib, urllib2, os
 import BaseHTTPServer
