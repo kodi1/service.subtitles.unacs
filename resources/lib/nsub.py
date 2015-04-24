@@ -64,43 +64,65 @@ def get_sub(id, sub_url, filename):
       update(id, 'exception',sub_url, sys.exc_info())
     else:
       update(r.get('fname','empty'), 'subs_download', sub_url)
-
   return r
+
+def get_dbg_dat(file):
+  i = 0
+  with open(file, 'rb') as f:
+    read = csv.reader(f)
+    for row in read:
+      i += 1
+      if any('title' in s for s in row):
+        ret = {}
+        ret['num'] = i
+        for m in re.finditer(r'(title|tvshow|season|episode):(.*?)(?:,|$)', row[1]):
+          ret[m.group(1)] = urllib.unquote_plus(m.group(2))
+        yield ret
 
 if __name__ == "__main__":
   cnt = len(sys.argv)
-  item ={'m':'',
-         'title':'',
-         'year':'',
-         'file_original_path':'',
-         'mansearch':'',
-         'tvshow':'',
-         'season':'',
-         'episode':'',
-        }
-
-  if cnt == 3:
-    item['year'] = sys.argv[2]
-  elif cnt == 1:
+  if cnt == 1:
     sys.exit(1)
-  item['title'] = sys.argv[1]
-
-  l = unacs.read_sub(item)
-  l += subs_sab.read_sub(item)
+  if '-f' == sys.argv[1]:
+    import csv
+    items = []
+    for in_f in [f for f in os.listdir(os.curdir) if f.endswith('.csv')]:
+      for r in get_dbg_dat(in_f):
+        r['file_original_path'] = ''
+        r['year'] = ''
+        r['mansearch'] = ''
+        items.append(r)
+  else:
+    items =[{'m':'',
+       'title': sys.argv[1],
+       'year':'',
+       'file_original_path':'',
+       'mansearch':'',
+       'tvshow':'',
+       'season':'',
+       'episode':'',
+       'num':0,
+      }]
 
   tmp =''
-  for ll in l:
-    tmp = tmp + get_info(ll)+'>>>>'+'\n'
+  for item in items:
+    if item['tvshow']:
+      in_dat = '%(num)d -> T:%(tvshow)s S:%(season)s E:%(episode)s' % item
+    else:
+      in_dat = '%(num)d -> T:%(title)s' % item
+    print in_dat
+
+    l = read_sub(item)
+    if l is not None:
+      for ll in l:
+        tmp = tmp + '%s[%s] %s\n' % ( ll['id'], in_dat, get_info(ll))
+
+    if l and l[-1]['url']:
+      log_my(l[-1]['url'])
+      r=get_sub(l[-1]['id'], l[-1]['url'], None)
+      if (r.has_key('data') and r.has_key('fname')):
+        print r['data'][:4]
+        savetofile(r['data'], r['fname'])
 
   savetofile(tmp, 'out.txt')
-
-  log_my(l[-1]['url'])
-
-  if l[-1]['id'] == 'unacs':
-    r=unacs.get_sub(None, l[-1]['url'], None)
-  else:
-    r=subs_sab.get_sub(None, l[-1]['url'], None)
-  if (r.has_key('data') and r.has_key('fname')):
-    print r['data'][:4]
-    savetofile(r['data'], r['fname'])
   sys.exit(0)

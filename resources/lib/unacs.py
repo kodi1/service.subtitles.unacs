@@ -3,7 +3,6 @@
 from nsub import log_my, savetofile, list_key
 from common import *
 
-list = []
 values = {'m':'',
           'a':'',
           't':'Submit',
@@ -58,6 +57,7 @@ def get_search_string (item):
   return search_string
 
 def read_sub (item):
+  list = []
   log_my(item['title'], item['file_original_path'])
 
   if item['mansearch']:

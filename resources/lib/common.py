@@ -31,8 +31,8 @@ path =''
 
 def log_my(*msg):
   if run_from_xbmc == True:
-    xbmc.log((u"### SSS-> %s" % (msg,)).encode('utf-8'),level=xbmc.LOGNOTICE)
-    #xbmc.log((u"### SSS-> %s" % (msg,)).encode('utf-8'),level=xbmc.LOGERROR)
+    xbmc.log((u"*** %s" % (msg,)).encode('utf-8'),level=xbmc.LOGNOTICE)
+    #xbmc.log((u"*** %s" % (msg,)).encode('utf-8'),level=xbmc.LOGERROR)
   else:
     for m in msg:
       print m,
