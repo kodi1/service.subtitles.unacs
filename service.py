@@ -9,7 +9,6 @@ import xbmcvfs
 import xbmcaddon
 import xbmcgui
 import xbmcplugin
-import shutil
 import unicodedata
 
 __addon__ = xbmcaddon.Addon()
@@ -17,13 +16,13 @@ __author__     = __addon__.getAddonInfo('author')
 __scriptid__   = __addon__.getAddonInfo('id')
 __scriptname__ = __addon__.getAddonInfo('name')
 __version__    = __addon__.getAddonInfo('version')
-__icon__       = __addon__.getAddonInfo('icon').decode("utf-8")
+__icon__       = unicode(__addon__.getAddonInfo('icon'), 'utf-8')
 __language__   = __addon__.getLocalizedString
 
-__cwd__        = xbmc.translatePath( __addon__.getAddonInfo('path') ).decode("utf-8")
-__profile__    = xbmc.translatePath( __addon__.getAddonInfo('profile') ).decode("utf-8")
-__resource__   = xbmc.translatePath( os.path.join( __cwd__, 'resources', 'lib' ) ).decode("utf-8")
-__temp__       = xbmc.translatePath( os.path.join( __profile__, 'temp', '') ).decode("utf-8")
+__cwd__        = unicode(xbmc.translatePath( __addon__.getAddonInfo('path')), 'utf-8')
+__profile__    = unicode(xbmc.translatePath( __addon__.getAddonInfo('profile')), 'utf-8')
+__resource__   = unicode(xbmc.translatePath( os.path.join( __cwd__, 'resources', 'lib' )), 'utf-8')
+__temp__       = unicode(xbmc.translatePath( os.path.join( __profile__, 'temp', '')), 'utf-8')
 
 sys.path.append (__resource__)
 import nsub
@@ -32,6 +31,20 @@ nsub.path = __temp__
 
 def Notify (msg1, msg2):
   xbmc.executebuiltin((u'Notification(%s,%s,%s,%s)' % (msg1, msg2, '7500', __icon__)).encode('utf-8'))
+
+def rmtree(path):
+  if isinstance(path, unicode):
+    path = path.encode('utf-8')
+
+  dirs, files = xbmcvfs.listdir(path)
+
+  for dir in dirs:
+    rmtree(os.path.join(path, dir))
+
+  for file in files:
+    xbmcvfs.delete(os.path.join(path, file))
+
+  xbmcvfs.rmdir(path)
 
 def Search(item):
   sub_data = read_sub(item)
@@ -92,7 +105,7 @@ def Download(id,url,filename, stack=False):
   ## pass that to XBMC to copy and activate
   if xbmcvfs.exists(__temp__):
     try:
-      shutil.rmtree(__temp__)
+      rmtree(__temp__)
     except:
       Notify('Error cleanup', 'error')
       pass
