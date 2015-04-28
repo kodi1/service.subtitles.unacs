@@ -29,6 +29,17 @@ if run_from_xbmc == True:
 list_key = ['rating', 'fps', 'url', 'cds', 'info', 'id']
 path =''
 
+def get_search_string (item):
+  search_string = item['title']
+  if item['tvshow']:
+    if item['season'] and item['episode']:
+        search_string = re.sub(r'\s+(.\d{1,2}.*?\d{2}[\s\S]*)$', '', item['tvshow'])
+        search_string += ' %#02dx' % int(item['season'])
+        search_string += '%#02d' % int(item['episode'])
+    else:
+        search_string = item['tvshow']
+  return search_string
+
 def log_my(*msg):
   if run_from_xbmc == True:
     xbmc.log((u"*** %s" % (msg,)).encode('utf-8'),level=xbmc.LOGNOTICE)

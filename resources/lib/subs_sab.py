@@ -42,17 +42,6 @@ def get_data(l, key):
     out.append(d[key])
   return out
 
-def get_search_string (item):
-  search_string = item['title']
-  if(item['tvshow']):
-    search_string = item['tvshow']
-  if(item['season']):
-    search_string += ' %#02dx' % int(item['season'])
-  if(item['episode']):
-    search_string += ' %#02d' % int(item['episode'])
-
-  return search_string
-
 def read_sub (item):
   list = []
   log_my(item['title'], item['file_original_path'])
