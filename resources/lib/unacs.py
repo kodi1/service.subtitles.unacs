@@ -23,7 +23,7 @@ headers = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:22.0) Gecko/2010010
            "Host":"subsunacs.net"}
 
 url = 'http://subsunacs.net:80'
-clean_str = r"(<div.*?>|<\/div>|<span.*?>|<\/span>|<img.*?>|<a[\s\S]*?>|<\/a>|<\/?b>|<br\s?\/>|<br>|\&\S*?;)"
+clean_str = r"(<div.*?>|<\/div>|<span.*?>|<\/span>|<img.*?>|<a[\s\S]*?>|<\/a>|<\/?b>|<br\s?\/>|<br>|\&\S*?;|<\/?u>|<\/?strong>|<\/?em>)"
 
 def get_id_url_n(txt, list):
   soup = BeautifulSoup(txt, 'html5lib')

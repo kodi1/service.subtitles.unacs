@@ -20,8 +20,7 @@ head = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:22.0) Gecko/20100101 F
            }
 
 url = "subs.sab.bz"
-clean_str = r"(ddri\S*?'|','\#\S+\)|<div.*?>|<\/div>|<span.*?>|<\/span>|<img.*?\/>|<a[\s\S]*?>|<\/a>|<\/?b>|<br\s?\/>|&lt;b&gt;|\&\S*?;|\/[ab]|br\s\/|a\shref.*?_blank)"
-
+clean_str = r"(ddri\S*?'|','\#\S+\)|<div.*?>|<\/div>|<span.*?>|<\/span>|<img.*?\/>|<a[\s\S]*?>|<\/a>|<\/?b>|<br\s?\/>|&lt;b&gt;|\&\S*?;|\/[ab]|br\s\/|a\shref.*?_blank)|<\/?i>|<\/?font.*?>"
 def get_id_url_n(txt, list):
   soup = BeautifulSoup(txt, 'html5lib')
   for link in soup.find_all('a', href=re.compile(r'[\S]attach_id=(?:\d+)')):

@@ -34,8 +34,7 @@ def get_search_string (item):
   if item['tvshow']:
     if item['season'] and item['episode']:
         search_string = re.sub(r'\s+(.\d{1,2}.*?\d{2}[\s\S]*)$', '', item['tvshow'])
-        search_string += ' %#02dx' % int(item['season'])
-        search_string += '%#02d' % int(item['episode'])
+        search_string += ' %#02dx%#02d' % (int(item['season']), int(item['episode']))
     else:
         search_string = item['tvshow']
   return search_string
