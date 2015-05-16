@@ -28,15 +28,32 @@ if run_from_xbmc == True:
 
 list_key = ['rating', 'fps', 'url', 'cds', 'info', 'id']
 path =''
-
+tv_show_list_re = [
+                  r'^([\S\s]*?)(?:s)(\d{1,2})[_\.\s]?(?:e)(\d{1,2})[\S\s]*$',
+                  r'^([\S\s]*?)(\d{1,2})(\d{2})[\S\s]*$',
+                  r'^([\S\s]*?)(\d{1,2})(?:x)(\d{1,2})[\S\s]*$',
+                ]
 def get_search_string (item):
   search_string = item['title']
+
+  if item['mansearch']:
+    search_string = item['mansearchstr']
+
+  for tv_match in tv_show_list_re:
+     m = re.match(tv_match, search_string, re.IGNORECASE)
+     if m:
+      item['tvshow'] = m.group(1)
+      item['season'] = m.group(2)
+      item['episode']= m.group(3)
+      break
+
   if item['tvshow']:
     if item['season'] and item['episode']:
         search_string = re.sub(r'\s+(.\d{1,2}.*?\d{2}[\s\S]*)$', '', item['tvshow'])
         search_string += ' %#02dx%#02d' % (int(item['season']), int(item['episode']))
     else:
         search_string = item['tvshow']
+
   return search_string
 
 def log_my(*msg):

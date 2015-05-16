@@ -41,15 +41,12 @@ def get_data(l, key):
     out.append(d[key])
   return out
 
-def read_sub (item):
+def read_sub (mov, year):
   list = []
-  log_my(item['title'], item['file_original_path'])
+  log_my(mov, year)
 
-  if item['mansearch']:
-    values['movie'] = item['mansearchstr']
-  else:
-    values['movie'] = get_search_string(item)
-    values['yr'] = item['year']
+  values['movie'] = mov
+  values['yr'] = year
 
   enc_values = urllib.urlencode(values)
   log_my('Url: ', (url), 'Headers: ', (head), 'Values: ', (enc_values))

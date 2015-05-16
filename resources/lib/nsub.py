@@ -18,6 +18,7 @@ def select_1(list):
   return l
 
 def read_sub (item):
+  search_str = get_search_string(item)
   update(os.path.basename(item['file_original_path']),
           'subs_search',
           'title:%(title)s,tvshow:%(tvshow)s,season:%(season)s,episode:%(episode)s' % item
@@ -25,7 +26,7 @@ def read_sub (item):
   l = []
   ret = 0
   try:
-    l.extend(unacs.read_sub(item))
+    l.extend(unacs.read_sub(search_str, item['year']))
   except Exception as e:
     log_my('unacs.read_sub', str(e))
     update(os.path.basename(item['file_original_path']),
@@ -35,7 +36,7 @@ def read_sub (item):
             )
     ret += 1
   try:
-    l.extend(subs_sab.read_sub(item))
+    l.extend(subs_sab.read_sub(search_str, item['year']))
   except Exception as e:
     log_my('subs_sab.read_sub', str(e))
     update(os.path.basename(item['file_original_path']),
