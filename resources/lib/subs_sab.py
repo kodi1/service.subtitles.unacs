@@ -24,10 +24,18 @@ clean_str = r"(ddri\S*?'|','\#\S+\)|<div.*?>|<\/div>|<span.*?>|<\/span>|<img.*?\
 def get_id_url_n(txt, list):
   soup = BeautifulSoup(txt, 'html5lib')
   for link in soup.find_all('a', href=re.compile(r'[\S]attach_id=(?:\d+)')):
-    t = link.find_parent('td').find_next_siblings('td', text=True)
+    p = link.find_parent('td')
+    t = p.find_next_siblings('td', text=True)
+
+    y = p.get_text()
+    if y:
+      yr = y.split('(')[1].split(')')[0]
+    else:
+      yr = 'n/s'
+
     list.append({'url': link['href'].split('attach_id=')[1],
                 'info': re.sub(clean_str, " ", link.get('onmouseover').encode('utf-8', 'replace')),
-                'year': link.find_parent('td').get_text().split('(')[1].split(')')[0],
+                'year': yr,
                 'cds': t[2].string.encode('utf-8', 'replace'),
                 'fps': t[3].string.encode('utf-8', 'replace'),
                 'rating': link.find_parent('tr').find(href='#').img.get('alt').split(':')[1].strip(),

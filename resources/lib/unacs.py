@@ -30,9 +30,16 @@ def get_id_url_n(txt, list):
   # dump_src(soup, 'src.html')
   for link in soup.find_all('a', href=re.compile(r'(?:\/subtitles\/\w+.*\/$)')):
     t = link.find_parent('td').find_next_siblings('td')
+
+    y = link.find_next_sibling('span', text=True)
+    if y:
+      yr = y.get_text().split('(')[1].split(')')[0]
+    else:
+      yr = 'n/s'
+
     list.append({'url': link['href'],
               'info': re.sub(clean_str, " ", link.get('title').encode('utf-8', 'replace')),
-              'year': link.find_next_sibling('span', text=True).get_text().split('(')[1].split(')')[0],
+              'year': yr,
               'cds': t[0].string.encode('utf-8', 'replace'),
               'fps': t[1].string.encode('utf-8', 'replace'),
               'rating': t[2].a.img and t[2].a.img.get('alt') or '0.0',
