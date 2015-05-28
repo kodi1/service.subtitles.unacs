@@ -26,26 +26,40 @@ if run_from_xbmc == True:
   import xbmcgui
   import xbmcplugin
 
-list_key = ['rating', 'fps', 'url', 'cds', 'info', 'id']
 path =''
+list_key = ['rating', 'fps', 'url', 'cds', 'info', 'id']
+
 tv_show_list_re = [
-                  r'^([\S\s]*?)(?:s)(\d{1,2})[_\.\s]?(?:e)(\d{1,2})[\S\s]*$',
-                  r'^([\S\s]*?)(\d{1,2})(\d{2})[\S\s]*$',
-                  r'^([\S\s]*?)(\d{1,2})(?:x)(\d{1,2})[\S\s]*$',
+                  r'^(?P<tvshow>[\S\s].*?)(?:s)(?P<season>\d{1,2})[_\.\s]?(?:e)(?P<episode>\d{1,2})[\S\s]*$',
+                  r'^(?P<tvshow>[\S\s].*?)(?P<season>\d{1,2})(?P<episode>\d{2})[\S\s]*$',
+                  r'^(?P<tvshow>[\S\s].*?)(?P<season>\d{1,2})(?:x)(?P<episode>\d{1,2})[\S\s]*$',
+                  r'^(?P<season>\d{1,2})(?:x)(?P<episode>\d{1,2})\s(?P<tvshow>[\S\s].*?)$',
                 ]
+
+movie_name_re = [
+                  r'(\(?(?:19[789]\d|20[01]\d)\)?)',
+                  r'(\[\/?B\])',
+                  r'(\[\/?COLOR.*?\])',
+                  r'(\:)',
+                ]
+
 def get_search_string (item):
   search_string = item['title']
 
   if item['mansearch']:
     search_string = item['mansearchstr']
 
-  for tv_match in tv_show_list_re:
-     m = re.match(tv_match, search_string, re.IGNORECASE)
-     if m:
-      item['tvshow'] = m.group(1)
-      item['season'] = m.group(2)
-      item['episode']= m.group(3)
-      break
+  for name_clean in movie_name_re:
+    search_string = re.sub(name_clean, '', search_string)
+
+  if not item['tvshow']:
+    for tv_match in tv_show_list_re:
+      m = re.match(tv_match, search_string, re.IGNORECASE)
+      if m:
+        item['tvshow'] = m.group('tvshow')
+        item['season'] = m.group('season')
+        item['episode']= m.group('episode')
+        break
 
   if item['tvshow']:
     if item['season'] and item['episode']:

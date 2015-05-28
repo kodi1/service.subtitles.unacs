@@ -17,14 +17,11 @@ def select_1(list):
   l.append(list[n])
   return l
 
-def read_sub (item):
-  search_str = get_search_string(item)
-  update(os.path.basename(item['file_original_path']),
-          'subs_search',
-          'title:%(title)s,tvshow:%(tvshow)s,season:%(season)s,episode:%(episode)s' % item
-          )
+def get_sub_item(item):
   l = []
   ret = 0
+  search_str = get_search_string(item)
+
   try:
     l.extend(unacs.read_sub(search_str, item['year']))
   except Exception as e:
@@ -47,6 +44,17 @@ def read_sub (item):
     ret += 2
   if ret == 3: return None
   return l
+
+def read_sub (*items):
+  update(os.path.basename(items[0]['file_original_path']),
+          'subs_search',
+          'title:%(title)s,tvshow:%(tvshow)s,season:%(season)s,episode:%(episode)s' % items[0]
+          )
+  for it in items:
+    i = get_sub_item(it)
+    if i:
+      break
+  return i
 
 def get_sub(id, sub_url, filename):
   r = {}

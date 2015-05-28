@@ -47,7 +47,13 @@ def rmtree(path):
   xbmcvfs.rmdir(path)
 
 def Search(item):
-  sub_data = read_sub(item)
+  it = []
+  _item = dict(item)
+  it.append(item)
+  _item['title'], _item['year'] = xbmc.getCleanMovieTitle( item['title'] )
+  it.append(_item)
+
+  sub_data = read_sub(*it)
   #### Do whats needed to get the list of subtitles from service site
   #### use item["some_property"] that was set earlier
   #### once done, set xbmcgui.ListItem() below and pass it to xbmcplugin.addDirectoryItem()
@@ -185,7 +191,6 @@ if params['action'] == 'search' or params['action'] == 'manualsearch':
 
   if item['title'] == "":
     item['title']  = normalizeString(xbmc.getInfoLabel("VideoPlayer.Title"))
-    item['title'], item['year'] = xbmc.getCleanMovieTitle( item['title'] )
 
   if item['tvshow']:
     # Remove the year from some tv show titles
