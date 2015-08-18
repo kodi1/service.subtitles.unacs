@@ -14,6 +14,7 @@ from httplib import *
 
 try:
   import xbmc
+  import xbmcgui
   from ga import ga
   run_from_xbmc = True
 except ImportError:
