@@ -10,6 +10,7 @@ import xbmcaddon
 import xbmcgui
 import xbmcplugin
 import unicodedata
+import simplejson as j
 
 __addon__ = xbmcaddon.Addon()
 __author__     = __addon__.getAddonInfo('author')
@@ -23,11 +24,17 @@ __cwd__        = unicode(xbmc.translatePath( __addon__.getAddonInfo('path')), 'u
 __profile__    = unicode(xbmc.translatePath( __addon__.getAddonInfo('profile')), 'utf-8')
 __resource__   = unicode(xbmc.translatePath( os.path.join( __cwd__, 'resources', 'lib' )), 'utf-8')
 __temp__       = unicode(xbmc.translatePath( os.path.join( __profile__, 'temp', '')), 'utf-8')
+__name_dict__  = unicode(xbmc.translatePath( os.path.join( __cwd__, 'resources', 'lib', 'dict.json' )), 'utf-8')
 
 sys.path.append (__resource__)
 import nsub
 from nsub import list_key, log_my, read_sub, get_sub, get_info, select_1
 nsub.path = __temp__
+
+def namesubst(str):
+  with open(__name_dict__, 'rb') as fd:
+    namesubst = j.loads(fd.read())
+    return namesubst.get(str, str)
 
 def Notify (msg1, msg2):
   xbmc.executebuiltin((u'Notification(%s,%s,%s,%s)' % (msg1, msg2, '7500', __icon__)).encode('utf-8'))
@@ -193,6 +200,7 @@ if params['action'] == 'search' or params['action'] == 'manualsearch':
     item['title']  = normalizeString(xbmc.getInfoLabel("VideoPlayer.Title"))
 
   if item['tvshow']:
+    item['tvshow'] = namesubst(item['tvshow'])
     # Remove the year from some tv show titles
     # NOTE: do not use the year for tv shows as it may cause wrong results
     item['year'] = ''
