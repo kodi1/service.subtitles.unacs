@@ -49,6 +49,7 @@ def get_search_string (item):
 
   if item['mansearch']:
     search_string = item['mansearchstr']
+    return search_string
 
   for name_clean in movie_name_re:
     search_string = re.sub(name_clean, '', search_string)
