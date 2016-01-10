@@ -208,9 +208,11 @@ if params['action'] == 'search' or params['action'] == 'manualsearch':
     if tvshmatch and len(tvshmatch.groups()) == 2:
       item['tvshow'] = tvshmatch.group(1)
 
-  if item['episode'].lower().find("s") > -1:                                      # Check if season is "Special"
-    item['season'] = "0"                                                          #
-    item['episode'] = item['episode'][-1:]
+  # Check if season is "Special"
+  special_index = item['episode'].lower().find("s")
+  if special_index > -1:
+    item['season'] = "0"
+    item['episode'] = item['episode'][special_index+1:]
 
   if ( item['file_original_path'].find("http") > -1 ):
     item['temp'] = True
