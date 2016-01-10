@@ -31,9 +31,9 @@ path =''
 list_key = ['rating', 'fps', 'url', 'cds', 'info', 'id']
 
 tv_show_list_re = [
-                  r'^(?P<tvshow>[\S\s].*?)(?:s)(?P<season>\d{1,2})[_\.\s]?(?:e)(?P<episode>\d{1,2})[\S\s]*$',
-                  r'^(?P<tvshow>[\S\s].*?)(?P<season>\d{1,2})(?P<episode>\d{2})[\S\s]*$',
-                  r'^(?P<tvshow>[\S\s].*?)(?P<season>\d{1,2})(?:x)(?P<episode>\d{1,2})[\S\s]*$',
+                  r'^(?P<tvshow>[\S\s].*?)(?:s)(?P<season>\d{1,2})[_\.\s]?(?:e)(?P<episode>\d{1,2})(?P<title>[\S\s]*)$',
+                  r'^(?P<tvshow>[\S\s].*?)(?P<season>\d{1,2})(?P<episode>\d{2})(?P<title>[\S\s]*)$',
+                  r'^(?P<tvshow>[\S\s].*?)(?P<season>\d{1,2})(?:x)(?P<episode>\d{1,2})(?P<title>[\S\s]*)$',
                   r'^(?P<season>\d{1,2})(?:x)(?P<episode>\d{1,2})\s(?P<tvshow>[\S\s].*?)$',
                 ]
 
@@ -61,6 +61,8 @@ def get_search_string (item):
         item['tvshow'] = m.group('tvshow')
         item['season'] = m.group('season')
         item['episode']= m.group('episode')
+        try: item['title'] = m.group('title') 
+        except: pass
         break
 
   if item['tvshow']:
