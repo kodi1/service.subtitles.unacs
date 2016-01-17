@@ -41,6 +41,7 @@ movie_name_re = [
                   r'(\(?(?:19[789]\d|20[01]\d)\)?)',
                   r'(\[\/?B\])',
                   r'(\[\/?COLOR.*?\])',
+                  r'\s(X{0,3})(IX|IV|V?I{0,3}):', # Roman numeral followed by a colon
                   r'(\:)',
                 ]
 
