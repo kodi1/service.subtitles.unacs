@@ -60,7 +60,7 @@ def Search(item):
   if sub_data != None:
     log_my(sub_data)
     for it in sub_data:
-      listitem = xbmcgui.ListItem(label=it['id'],                    # language name for the found subtitle
+      listitem = xbmcgui.ListItem(label="Bulgarian",               # language name for the found subtitle
                                 label2=get_info(it),               # file name for the found subtitle
                                 iconImage=str(int(round(float(it['rating'])))), # rating for the subtitle, string 0-5
                                 thumbnailImage="bg"          # language flag, ISO_639_1 language + gif extention, e.g - "en.gif"
