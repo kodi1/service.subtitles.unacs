@@ -14,15 +14,19 @@ values = {'m':'',
           'l':'0',
           'd':''}
 
-headers = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:22.0) Gecko/20100101 Firefox/22.0 Iceweasel/22.0",
-           "Content-type": "application/x-www-form-urlencoded",
-           "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-           "Accept-Encoding": "gzip, deflate",
-           "cache-control":"no-cache",
-           "Referer":"http://subsunacs.net/search.php",
-           "Host":"subsunacs.net"}
+headers = {
+            "Host": "subsunacs.net",
+            "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0",
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            "Accept-Language": "en-US,en;q=0.5",
+            "Accept-Encoding": "gzip, deflate, br",
+            "DNT": "1",
+            "Connection": "keep-alive",
+            "Upgrade-Insecure-Requests": "1",
+            "Cache-Control": "max-age=0",
+          }
 
-url = 'http://subsunacs.net:80'
+url = 'https://subsunacs.net'
 clean_str = r"(<div.*?>|<\/div>|<span.*?>|<\/span>|<img.*?>|<a[\s\S]*?>|<\/a>|<\/?b>|<br\s?\/>|<br>|\&\S*?;|<\/?u>|<\/?strong>|<\/?em>)"
 
 def get_id_url_n(txt, list):
@@ -88,6 +92,7 @@ def read_sub (mov, year):
 def get_sub(id, sub_url, filename):
   s = {}
   enc_values = urllib.urlencode(values)
+  headers['Referer'] = url + '/search.php?'
   request = urllib2.Request(url + sub_url, enc_values, headers)
   response = urllib2.urlopen(request)
   log_my(response.code, BaseHTTPServer.BaseHTTPRequestHandler.responses[response.code][0])
