@@ -17,44 +17,43 @@ def select_1(list):
   l.append(list[n])
   return l
 
-def get_sub_item(item):
+def read_sub(*items):
   l = []
-  ret = 0
-  search_str = get_search_string(item)
 
-  try:
-    l.extend(unacs.read_sub(search_str, item['year']))
-  except Exception as e:
-    log_my('unacs.read_sub', str(e))
-    update(os.path.basename(item['file_original_path']),
-            'exception',
-            'title:%(title)s,tvshow:%(tvshow)s,season:%(season)s,episode:%(episode)s' % item,
-            sys.exc_info()
-            )
-    ret += 1
-  try:
-    l.extend(subs_sab.read_sub(search_str, item['year']))
-  except Exception as e:
-    log_my('subs_sab.read_sub', str(e))
-    update(os.path.basename(item['file_original_path']),
-            'exception',
-            'title:%(title)s,tvshow:%(tvshow)s,season:%(season)s,episode:%(episode)s' % item,
-            sys.exc_info()
-            )
-    ret += 2
-  if ret == 3: return None
-  return l
-
-def read_sub (*items):
   update(os.path.basename(items[0]['file_original_path']),
           'subs_search',
           'title:%(title)s,tvshow:%(tvshow)s,season:%(season)s,episode:%(episode)s' % items[0]
           )
-  for it in items:
-    i = get_sub_item(it)
-    if i:
-      break
-  return i
+
+  for item in items:
+    search_str = get_search_string(item)
+    try:
+      ll = unacs.read_sub(search_str, item['year'])
+      if ll:
+        l.extend(ll)
+    except Exception as e:
+      log_my('unacs.read_sub', str(e))
+      update(os.path.basename(item['file_original_path']),
+              'exception',
+              'title:%(title)s,tvshow:%(tvshow)s,season:%(season)s,episode:%(episode)s' % item,
+              sys.exc_info()
+              )
+
+    try:
+      ll = subs_sab.read_sub(search_str, item['year'])
+      if ll:
+        l.extend(ll)
+    except Exception as e:
+      log_my('subs_sab.read_sub', str(e))
+      update(os.path.basename(item['file_original_path']),
+              'exception',
+              'title:%(title)s,tvshow:%(tvshow)s,season:%(season)s,episode:%(episode)s' % item,
+              sys.exc_info()
+              )
+  if not l:
+    return None
+
+  return [i for n,i in enumerate(l) if i not in l[:n]]
 
 def get_sub(id, sub_url, filename):
   r = {}

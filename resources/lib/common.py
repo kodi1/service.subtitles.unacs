@@ -43,7 +43,23 @@ movie_name_re = [
                   r'(\[\/?COLOR.*?\])',
                   r'\s(X{0,3})(IX|IV|V?I{0,3}):', # Roman numeral followed by a colon
                   r'(\:)',
+                  r'(part[\s\S]\d+)'
                 ]
+
+search_re =     [
+                  (r'(-)', ' '),
+                  (r'(\.)', ' '),
+                  (r'(\s+)', ' '),
+                ]
+
+def log_my(*msg):
+  if run_from_xbmc == True:
+    xbmc.log((u"*** %s" % (msg,)).encode('utf-8'),level=xbmc.LOGNOTICE)
+    #xbmc.log((u"*** %s" % (msg,)).encode('utf-8'),level=xbmc.LOGERROR)
+  else:
+    for m in msg:
+      print m,
+    print
 
 def get_search_string (item):
   search_string = item['title']
@@ -77,16 +93,10 @@ def get_search_string (item):
     else:
       search_string = item['tvshow']
 
-  return search_string
+  for f, r in search_re:
+    search_string = re.sub(f, r, search_string)
 
-def log_my(*msg):
-  if run_from_xbmc == True:
-    xbmc.log((u"*** %s" % (msg,)).encode('utf-8'),level=xbmc.LOGNOTICE)
-    #xbmc.log((u"*** %s" % (msg,)).encode('utf-8'),level=xbmc.LOGERROR)
-  else:
-    for m in msg:
-      print m,
-    print
+  return search_string
 
 def update(name, act_ev, dat, crash=None):
   payload = {}

@@ -37,7 +37,7 @@ def namesubst(str):
     return namesubst.get(str, str)
 
 def Notify (msg1, msg2):
-  xbmc.executebuiltin((u'Notification(%s,%s,%s,%s)' % (msg1, msg2, '7500', __icon__)).encode('utf-8'))
+  xbmc.executebuiltin((u'Notification(%s,%s,%s,%s)' % (msg1, msg2, '10000', __icon__)).encode('utf-8'))
 
 def rmtree(path):
   if isinstance(path, unicode):
